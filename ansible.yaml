@@ -1,23 +1,22 @@
----
-  - name: R1soft agent installation on new servers
+me: R1soft agent installation on new servers
     hosts: all
     tasks:
     - name: Create repo file
-      when: ansible_os_family == "RedHat"
+      when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18.04"
       copy:
         src: /etc/yum.repos.d/r1soft.repo
         dest: /etc/yum.repos.d/r1soft.repo
         owner: root
         group: root
     - name: Install Agent
-      when: ansible_os_family == "RedHat"
+      when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18.04"
       package:
         name: serverbackup-enterprise-agent
         state: installed
 
 
     - name: Get key from server
-      when: ansible_os_family == "RedHat"
+      when: ansible_os_family == "Ubuntu"
       command: "r1soft-setup --get-key http://18.203.251.92:8080"
 
 
@@ -38,8 +37,8 @@
 
     - name: Next command
       when: ansible_distribution == "Ubuntu"
-      command: "apt-get update" 
-  
+      command: "apt-get update"
+
     - name: Install agent
       when: ansible_distribution == "Ubuntu"
       apt:
@@ -48,4 +47,3 @@
 
     - name: Get Key From Server
       command: "r1soft-setup --get-key http://18.203.251.92:5000"
-
