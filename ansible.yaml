@@ -1,0 +1,44 @@
+    copy:
+        src: /etc/yum.repos.d/r1soft.repo
+        dest: /etc/yum.repos.d/r1soft.repo
+        owner: root
+        group: root
+    - name: Install Agent
+      when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18.04"
+      package:
+        name: serverbackup-enterprise-agent
+        state: installed
+
+
+    - name: Get key from server
+      when: ansible_os_family == "Ubuntu"
+      command: "r1soft-setup --get-key http://18.203.251.92:8080"
+
+
+    - name: Install R1soft on Ubuntu
+      when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "18.04"
+      command: "echo deb http://repo.r1soft.com/apt stable main >> /etc/apt/sources.list"
+
+    - name: Next command
+      when: ansible_distribution == "Ubuntu"
+      uri:
+        url: http://repo.r1soft.com/r1soft.asc
+
+
+    - name: Next command
+      when: ansible_distribution == "Ubuntu"
+      command: "apt-key add r1soft.asc"
+
+
+    - name: Next command
+      when: ansible_distribution == "Ubuntu"
+      command: "apt-get update"
+
+    - name: Install agent
+      when: ansible_distribution == "Ubuntu"
+      apt:
+        name: "r1soft-cdp-enterprise-agent"
+        state: present
+
+    - name: Get Key From Server
+      command: "r1soft-setup --get-key http://18.203.251.92:5000"
